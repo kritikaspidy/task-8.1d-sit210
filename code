@@ -1,0 +1,37 @@
+import smbus # For creating bus instances 
+import time
+import tkinter as tk
+
+ADDRESS = 0x23 # I2C device address
+HIGH_RES_MODE = 0x20 
+ 
+bus = smbus.SMBus(1)  
+
+def readLight():
+  reading = bus.read_i2c_block_data(ADDRESS,HIGH_RES_MODE)
+  result = ((reading[1] + (256 * reading[0])) / 1.2)
+  return result
+
+try:
+	while True:
+                  Value = readLight()
+	print ("Light Intensity: " + str(Value) + " Lux")
+	
+	if(Value < 25):
+		print("Too Dark")
+	elif(Value<50 and Value >= 25):
+		print("Dark")
+	elif(Value < 100 and Value>= 50):
+		print("Medium")
+	elif(Value < 500 and Value >= 100):
+		print("Bright")
+	else:
+		print("TOO Bright")
+
+
+except KeyboardInterrupt:
+	pass
+
+finally:
+	bus.close()
+
